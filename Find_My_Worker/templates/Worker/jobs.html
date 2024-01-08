@@ -21,6 +21,16 @@
 <div class="container-xxl py-5">
     <div class="container">
         <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Job Listing</h1>
+        <form action="{% url 'search_jobs' %}" method="get">
+            {% csrf_token %}
+                <div class="input-group" style="width: 400px; 
+                margin-left: 35%;
+                margin-top: 15px;">
+                  <input type="search" name="search" class="form-control rounded" placeholder="Search Jobs" aria-label="Search" aria-describedby="search-addon" required />
+                  <button type="submit" class="btn btn-outline-danger" data-mdb-ripple-init>search</button>
+              </div>
+        </form>
+    
         <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.3s">
             <div class="tab-content">
                 <div id="tab-1" class="tab-pane fade show p-0 active">

@@ -157,6 +157,14 @@ def view_jobs(request):
     print(jobs)
     return render(request, 'Worker/jobs.html', {'jobs':jobs})
 
+def search_jobs(request):
+    User = CustomUser.objects.get(id=request.user.id)
+    if request.method == 'GET':
+        search_query = request.GET.get('search')
+        if search_query:
+            jobs = Job.objects.filter(jobcategory_id__job_name__icontains=search_query)
+            return render(request, 'Worker/jobs.html', {'jobs':jobs, 'User':User})
+
 def job_apply(request,id):
     worker = CustomUser.objects.get(id=request.user.id)
     job = Job.objects.get(id=id)
