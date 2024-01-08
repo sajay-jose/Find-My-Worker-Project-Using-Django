@@ -1,0 +1,50 @@
+{% extends 'Home/index.html' %}
+{% block content %}
+   <!-- ***** Call to Action Start ***** -->
+   <section class="section section-bg" id="call-to-action" style="background-image: url('{static `images/banner-image-1-1920x500.jpg` }')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="cta-content">
+                    <br>
+                    <br>
+                    <h2>Our <em>Jobs</em></h2>
+                    <p>Ut consectetur, metus sit amet aliquet placerat, enim est ultricies ligula</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ***** Call to Action End ***** -->
+{% endblock %}
+{% block job %}   
+{% load static %}
+<section class="section" id="trainers">
+    <div class="container">
+
+        <div class="row">
+        {% for job in jobs %}
+            <div class="col-lg-4">
+                <div class="trainer-item">
+                    <div class="image-thumb">
+                        <img src="{{ job.image.url }}" alt="">
+                    </div>
+                    <div class="down-content">
+                        <span> <sup>$</sup>70 000 </span>
+
+                        <h4>{{ job.job_name }}</h4>
+                        <h4>{{ job.job_details }}</h4>
+
+                        <p>Medical &nbsp;/&nbsp; Health Jobs</p>
+
+                        <ul class="social-icons">
+                            <li><a href="{% url 'job_details'%}">+ View More</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>     
+        {% endfor %}
+        </div>
+        <br>
+</section>
+{% endblock %}
