@@ -1,4 +1,4 @@
-{% extends 'Worker/worker-home.html' %}
+{% extends 'Employer/employer-home.html' %}
 
 {% block content %}
    <!-- ***** Call to Action Start ***** -->
@@ -42,9 +42,9 @@
                                 <img class="flex-shrink-0 img-fluid border rounded" src="{{ job.jobcategory_id.image.url}}" alt="" style="width: 130px; height: 130px;">
                                 <div class="text-start ps-4">
                                     <h5 class="mb-3">{{ job.jobcategory_id.job_name}}</h5>
-                                    <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>New York, USA</span>
+                                    <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>Worker Name: {{ job.worker_id.username }}</span><br>
                                     <span class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>Full Time</span>
-                                    <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i>{{ job.price}}/span>
+                                    <span class="text-truncate me-0"><i class="far fa-money-bill-alt text-primary me-2"></i><b>&#x20B9;</b>{{ job.Price }}/Hour</span>
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">

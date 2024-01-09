@@ -9,7 +9,7 @@
                 <div class="cta-content">
                     <br>
                     <br>
-                    <h2><em>Requests</em></h2>
+                    <h2><em>Bookings</em></h2>
                    
                 </div>
             </div>
@@ -51,7 +51,7 @@
                         <tr>
                           <th scope="col">Job</th>
                           <th scope="col">Date</th>
-                          <th scope="col">Worker Name</th>
+                          <th scope="col">Employer Name</th>
                           <th scope="col">Contact</th>
                           <th scope="col">Status</th>
                           <th scope="col"></th>
@@ -64,36 +64,21 @@
                  
                         {% for job in applications %}
                         <tr>
+                        {% if job.status == "Approved" %}
                           <td>{{ job.job_id.jobcategory_id.job_name}}</td>
                           <td>{{ job.booked_date }}</td>
                           <td>{{ job.employer_id.username }}</td>
                           <td>{{ job.employer_id.phone_number }}</td>
                           <td>{{ job.status}}</td>
-                          <td>
-                            <form method="post" action="{% url 'edit_applicationstatus' id=job.id %}">
-                              {% csrf_token %}
-                              {% if job.status == "Pending" %}
-                              <input type="hidden" name="status" >
-                              <button title="accept" style="border: none;background-color: white;color: rgb(40, 167, 23); font-size: 20px;" type="submit" name="status" value="approve" >
-                                <i class="fa fa-check"></i> 
-                              </button>
-                              <button title="reject" style="border: none;background-color: white;color: red; font-size: 20px;" type="submit" name="status" value="reject" >
-                                <i class="fa fa-times"></i> 
-                              </button>
-                              {% endif %}
-                              
-                              {% if job.status == "Approved" %}
-                              <button type="" class="btn btn-primary">Approved</button>
-                              {% endif %}
-                            </form>
-                          </td>
-                          <td>
+                        {% endif %}
+      
+                          <!-- <td>
                             {% if booking.status%}
                             <a href="{% url 'rating' id=booking.id %}" class="btn btn-primary">
                               more
                             </a>
                           {% endif %}
-                          </td>
+                          </td> -->
                         </tr>
                         {% endfor %}       
                        
@@ -146,21 +131,7 @@ thead {
   </style>
 
     <!-- MDB -->
-<script
-type="text/javascript"
-src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
-></script>
-
-
-
-
-
-
-
-
-
-
-
+<script type="text/javascript"src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
 
 {% endblock %}
 

@@ -25,35 +25,6 @@ def job_details(request):
 def contact(request):
     return render(request, 'Home/contact.html')
 
-def worker_register(request):
-    if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        address = request.POST['address']
-        phone_number = request.POST['contact']
-        email = request.POST['email']
-        username = request.POST['username']
-        password = request.POST['password']
-        description = request.POST['about_me']
-        pic = request.FILES['image']
-        data = CustomUser.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            phone_number=phone_number,
-            address=address,
-            email=email,
-            description=description,
-            pic=pic,
-            username=username,
-            password=password,
-            user_type=1
-        )
-        data.save()
-        return redirect(Login)
-
-    else:    
-        return render(request, 'Home/worker-register.html')
-
 def employer_register(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
@@ -75,12 +46,41 @@ def employer_register(request):
             pic=pic,
             username=username,
             password=password,
-            user_type=0
+            user_type="employer"
+        )
+        data.save()
+        return redirect(Login)
+
+    else:    
+        return render(request, 'Home/employer-register.html')
+
+def worker_register(request):
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        address = request.POST['address']
+        phone_number = request.POST['contact']
+        email = request.POST['email']
+        username = request.POST['username']
+        password = request.POST['password']
+        description = request.POST['about_me']
+        pic = request.FILES['image']
+        data = CustomUser.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            address=address,
+            email=email,
+            description=description,
+            pic=pic,
+            username=username,
+            password=password,
+            user_type="worker"
         )
         data.save()
         return redirect(Login)
     else:    
-        return render (request, 'Home/employer-register.html')
+        return render (request, 'Home/worker-register.html')
 
 def Login(request):
     if request.method == 'POST':
@@ -96,9 +96,9 @@ def Login(request):
         elif user is not None:
             # If not an admin, check regular users            
             login(request, user)
-            if user.user_type == 1:     #worker profile
+            if user.user_type == "worker":     #worker profile
                 return redirect(worker_home)
-            elif user.user_type == 0:   #Employer profile
+            elif user.user_type == "employer":   #Employer profile
                 return redirect(employer_home)  
         else:
             context = {
@@ -118,7 +118,7 @@ def Logout(request):
 
 
 
-def worker_home(request):
+def employer_home(request):
     data = CustomUser.objects.get(id=request.user.id)
     jobs = Job.objects.all()
 
@@ -126,65 +126,7 @@ def worker_home(request):
         'user': data,
         'jobs':jobs
     }
-    return render(request, 'Worker/worker-home.html', context)
-
-def worker_profile(request):
-    data = CustomUser.objects.get(id=request.user.id)
-    print(data)
-    context = {
-        'user': data
-    }
-    return render(request, 'Worker/profile.html', context)
-
-def worker_edit_profile(request):
-    User = CustomUser.objects.get(id = request.user.id) 
-    form = WorkerEditForm(instance=User)
-    if request.method == 'POST':
-        form = WorkerEditForm(request.POST, instance=User)
-        if form.is_valid():
-            form.save()
-            return redirect(worker_profile)
-        else:
-            context = {
-                'message': "Please enter valid data"
-            }
-            return render(request, 'Worker/edit-profile.html', context)
-    else:
-         return render(request, 'Worker/edit-profile.html',{'form':form})
-
-def view_jobs(request):
-    jobs = Job.objects.all()
-    print(jobs)
-    return render(request, 'Worker/jobs.html', {'jobs':jobs})
-
-def search_jobs(request):
-    User = CustomUser.objects.get(id=request.user.id)
-    if request.method == 'GET':
-        search_query = request.GET.get('search')
-        if search_query:
-            jobs = Job.objects.filter(jobcategory_id__job_name__icontains=search_query)
-            return render(request, 'Worker/jobs.html', {'jobs':jobs, 'User':User})
-
-def job_apply(request,id):
-    worker = CustomUser.objects.get(id=request.user.id)
-    job = Job.objects.get(id=id)
-    JobApplications.objects.create(worker_id=worker,job_id=job)
-    return redirect(view_jobs)
-
-
-
-def worker_history(request):
-    worker = CustomUser.objects.get(id=request.user.id)
-    applications = JobApplications.objects.filter(worker_id=worker)
-    print(applications)
-    return render(request, 'Worker/history.html', {'applications':applications})
-
-
-###############################################################################################################
-
-
-
-
+    return render(request, 'Employer/employer-home.html', context)
 
 def employer_profile(request):
     data = CustomUser.objects.get(id=request.user.id)
@@ -196,6 +138,71 @@ def employer_profile(request):
 
 def employer_edit_profile(request):
     User = CustomUser.objects.get(id = request.user.id) 
+    form = WorkerEditForm(instance=User)
+    if request.method == 'POST':
+        form = WorkerEditForm(request.POST, instance=User)
+        if form.is_valid():
+            form.save()
+            return redirect(employer_profile)
+        else:
+            context = {
+                'message': "Please enter valid data"
+            }
+            return render(request, 'Employer/edit-profile.html', context)
+    else:
+         return render(request, 'Employer/edit-profile.html',{'form':form})
+
+def view_jobs(request):
+    jobs = Job.objects.all()
+    print(jobs)
+    return render(request, 'Employer/jobs.html', {'jobs':jobs})
+
+def search_jobs(request):
+    User = CustomUser.objects.get(id=request.user.id)
+    if request.method == 'GET':
+        search_query = request.GET.get('search')
+        if search_query:
+            jobs = Job.objects.filter(jobcategory_id__job_name__icontains=search_query)
+            return render(request, 'Employer/jobs.html', {'jobs':jobs, 'User':User})
+
+def job_apply(request,id):
+    employer = CustomUser.objects.get(id=request.user.id)
+    job = Job.objects.get(id=id)
+    JobApplications.objects.create(employer_id=employer,job_id=job)
+    return redirect(view_jobs)
+
+
+
+def employer_history(request):
+    employer = CustomUser.objects.get(id=request.user.id)
+    applications = JobApplications.objects.filter(employer_id=employer)
+    print(applications)
+    return render(request, 'Employer/history.html', {'applications':applications})
+
+
+def employer_applications(request):
+    employer = CustomUser.objects.get(id=request.user.id)
+    applications = JobApplications.objects.filter(employer_id=employer)
+    print(applications)
+    return render(request, 'Employer/job-applications.html', {'applications':applications})
+
+
+###############################################################################################################
+
+
+
+
+
+def worker_profile(request):
+    data = CustomUser.objects.get(id=request.user.id)
+    print(data)
+    context = {
+        'user': data
+    }
+    return render(request, 'Worker/profile.html', context)
+
+def worker_edit_profile(request):
+    User = CustomUser.objects.get(id = request.user.id) 
     if request.method == 'POST':
         User.first_name = request.POST['first_name']
         User.last_name = request.POST['last_name']
@@ -204,48 +211,50 @@ def employer_edit_profile(request):
         User.email = request.POST['email']
         User.username = request.POST['username']
         User.description = request.POST['about_me']
-        User.pic = request.FILES['image']
+        if 'image' in request.FILES:
+            User.pic = request.FILES['image']
         User.save()
-        return redirect(employer_profile)
+        return redirect(worker_profile)
     else:
          context = {
              'User':User
          }
-         return render(request, 'Employer/edit-profile.html', context)
+         return render(request, 'Worker/edit-profile.html', context)
 
 
 
-def employer_home(request):
-    employer = CustomUser.objects.get(id=request.user.id)
-    jobs = Job.objects.filter(employer_id=employer)
+def worker_home(request):
+    worker = CustomUser.objects.get(id=request.user.id)
+    jobscategory = JobCategory.objects.all()
+    jobs = Job.objects.filter(worker_id=worker)
     print(jobs)
     context = {
-        'employer':employer,
+        'worker':worker,
         'jobs':jobs,
+        'jobscategory':jobscategory
         }
-    return render(request, 'Employer/employer-home.html', context)
+    return render(request, 'Worker/worker-home.html', context)
 
 
 def add_jobs(request):
-    employer = CustomUser.objects.get(id=request.user.id)
+    worker = CustomUser.objects.get(id=request.user.id)
     jobcategory = JobCategory.objects.all()
-    jobs = Job.objects.filter(employer_id=employer)
+    jobs = Job.objects.filter(worker_id=worker)
     if request.method == 'POST':
         JOBcategory_id = request.POST['jobcategory']
         price = request.POST['price']
         description = request.POST['description']
         jobcategory_id = JobCategory.objects.get(id=JOBcategory_id)
-        job = Job.objects.create(employer_id=employer, jobcategory_id=jobcategory_id, Price=price, description=description)
+        job = Job.objects.create(worker_id=worker, jobcategory_id=jobcategory_id, Price=price, description=description)
         job.save()
-        return redirect(employer_home)
-
+        return redirect(worker_home)
     else:
         context = {
-        'employer':employer,
+        'worker':worker,
         'jobs':jobs,
-        'jobcategory':jobcategory
+        'jobscategory':jobcategory
         }
-    return render(request, 'Employer/employer-home.html', context)
+    return render(request, 'Worker/worker-home.html', context)
     
 def edit_job(request,id):
     jobs = Job.objects.get(id=id)
@@ -258,14 +267,34 @@ def edit_job(request,id):
     context = {
         'jobs':jobs,
         }
-    return render(request, 'Employer/edit_job.html', context)
+    return render(request, 'Worker/edit_job.html', context)
 
 def delete_job(request,id):
     data = Job.objects.get(id=id)
     data.delete()
-    return redirect(employer_home)
+    return redirect(worker_home)
 
-def employer_application(request):
-    employer = CustomUser.objects.get(id=request.user.id)
+def view_request(request):
+    worker = CustomUser.objects.get(id=request.user.id)
+    applications = JobApplications.objects.filter(job_id__worker_id=worker)
+    return render(request, 'Worker/history.html', {'applications':applications})
+
+def edit_applicationstatus(request,id):
+    applications = JobApplications.objects.get(id=id)
+    if request.method == 'POST':
+        status = request.POST['status']
+        if status == 'approve':
+            applications.status = 'Approved'
+        elif status == 'reject':
+            applications.status = 'Rejected'
+        applications.save()
+        return redirect(view_request)
+    
+def view_bookings(request):
+    worker = CustomUser.objects.get(id=request.user.id)
+    applications = JobApplications.objects.filter(job_id__worker_id=worker)
+    return render(request, 'Worker/bookings.html', {'applications':applications})
+
+
 
     

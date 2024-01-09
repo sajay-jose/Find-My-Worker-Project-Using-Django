@@ -1,270 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static%}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static\login\style.css">
-    <title>Form</title>
-    <style>
-      @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-
-* {
-    margin: 0;
-    padding: 0;
-    font-family: calibri;
-    box-sizing: border-box;
-}
-
-body {
-    background-image: url("static/images/6345959.jpg");
-    background-size: cover;
-}
-
-#main-container {
-    width: 100%;
-    height: 100vh;
-    min-width: 400px;
-}
-
-.centered-flex {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.form-container {
-    width: 400px;
-    display: flex;
-    position: relative;
-    align-items: center;
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
-    flex-direction: column;
-    background: white;
-    border: 1px solid rgba(255, 255, 255, 0.097);
-}
-
-.icon {
-    position: absolute;
-    width: 85px;
-    height: 85px;
-    border: 1px solid #2a2a2a;
-    border-radius: 50%;
-    transform: translateY(-50%);
-    background: #0a0a0a;
-}
-
-.fa {
-    font-size: 50px;
-    color: #a2a2a2;
-}
-
-.title {
-    position: relative;
-    margin: 60px 0 10px;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-}
-
-form {
-    flex-direction: column;
-    padding: 25px 25px 10px;
-    height: 100%;
-    position: relative;
-    width: -webkit-fill-available;
-}
-
-.msg {
-    display: block;
-    color: #fa2929;
-    position: absolute;
-    top: 5%;
-}
-
-.field {
-    display: flex;
-    position: relative;
-    width: 100%;
-}
-
-.field .fa {
-    position: absolute;
-    font-size: 14px;
-    right: 10px;
-    bottom: 10px;
-}
-
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 30px rgb(14 14 14) inset;
-}
-
-input:-webkit-autofill {
-    -webkit-text-fill-color: #bababa !important;
-}
-
-form input {
-    display: block;
-    outline: none;
-    width: 100%;
-    border: none;
-    font-size: 16px;
-    color: #d2d2d2;
-    margin: 25px 0 5px;
-    caret-color: #cccccc;
-    background: transparent;
-    padding: 10px 25px 3px 0;
-    border-bottom: 1px solid #404040;
-}
-
-.action {
-    justify-content: space-between;
-    width: 100%;
-    font-size: 14px;
-}
-
-.action label {
-    cursor: pointer;
-    color: #7d7d7d;
-}
-
-.action input {
-    width: auto;
-    margin: 0 8px 0 0;
-    cursor: pointer;
-}
-
-a {
-    text-decoration: none;
-    color: #9b9b9b;
-}
-
-.btn-container {
-    padding: 20px;
-    transition: .2s linear;
-}
-
-#btn {
-    padding: 5px 20px;
-    border: none;
-    background: rgb(25, 62, 97);
-    color: white;
-    font-weight: 600;
-    font-size: 16px;
-    border-radius: 15px;
-    transition: .3s;
-    margin: 25px 0;
-}
-
-#btn:hover {
-    cursor: pointer;
-}
-
-.signup {
-    color: rgb(70, 70, 70);
-    margin-top: 10px;
-}
-
-.shift-left {
-    transform: translateX(-120%);
-}
-
-.shift-right {
-    transform: translateX(120%);
-}
-
-.shift-top {
-    transform: translateY(-150%);
-}
-
-.shift-bottom {
-    transform: translateY(150%);
-}
-
-.no-shift {
-    transform: translate(0%, 0%);
-}
-    </style>
-
-
-<script>
-
-const uname = document.getElementById('uname');
-const pass = document.getElementById('pass');
-const btnContainer = document.querySelector('.btn-container');
-const btn = document.getElementById('btn');
-const form = document.querySelector('form');
-const msg = document.querySelector('.msg');
-btn.disabled = true;
-
-function shiftButton() {
-    showMsg();
-    const positions = ['shift-left', 'shift-top', 'shift-right', 'shift-bottom'];
-    const currentPosition = positions.find(dir => btn.classList.contains(dir));
-    const nextPosition = positions[(positions.indexOf(currentPosition) + 1) % positions.length];
-    btn.classList.remove(currentPosition);
-    btn.classList.add(nextPosition);
-}
-
-function showMsg() {
-    const isEmpty = uname.value === '' || pass.value === '';
-    btn.classList.toggle('no-shift', !isEmpty);
-
-    if (isEmpty) {
-        btn.disabled = true
-        msg.style.color = 'rgb(218 49 49)';
-        msg.innerText = 'Please fill the input fields before proceeding';
-    } else {
-        msg.innerText = 'Great! Now you can proceed';
-        msg.style.color = '#92ff92';
-        btn.disabled = false;
-        btn.classList.add('no-shift')
-    }
-}
-
-btnContainer.addEventListener('mouseover', shiftButton);
-btn.addEventListener('mouseover', shiftButton);
-form.addEventListener('input',showMsg)
-btn.addEventListener('touchstart', shiftButton);
-
-</script>
-</head>
-
-<body style="background-image: url('{% static "images\view-travel-items-assortment-still-life.jpg" %}');background-size: cover;">
-
-        <div class="form-container" >
-            <form id="login-form" class="centered-flex" action="{% url 'worker_edit_profile' %}" method="POST"  enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="msg" style="color: black;font-size: 22px;font-weight: bold;text-shadow: 2px 2px 5px black;">Registration User</div>
-                <div class="field" style="margin-top: 45px;">
-                    <input type="text" placeholder="Name" id="name" name="name" style="color: black;" value="{{result.name}}">
-                </div>
-                <div class="field">
-                    <input type="textarea" placeholder="Address" id="adress" name="address" style="color: black;" value="{{result.address}}">
-                </div>
-                <div class="field">
-                    <input type="number" placeholder="Phone" id="phone" name="phone" style="color: black;" value="{{result.phone}}">
-                </div>
-                <div class="field">
-                    <input type="email" placeholder="Email" id="email" name="email" style="color: black;" value="{{result.email}}">
-                </div>
-                <div class="field">
-                    <input type="text" placeholder="Username" id="username" name="username" style="color: black;" value="{{result.username}}">
-                    <i class="fa fa-user"></i>
-                </div>
-                <div class="field">
-                    <input type="password" placeholder="Password" id="password" name="password" style="color: black;" value="{{result.password}}">
-                    <i class="fa fa-lock"></i>
-                </div>
-               
-                <div><input type="submit" name="" id="" value="submit" style="background-color: rgb(25, 62, 97);height: 30px;width:100px;display: inline-block;color: white;font-weight: bold;text-align: center;padding-top: 5px;border-radius: 15px;padding-left: 15px;"></div>
-                <div>
-                 
-                </div>
-            </form>
+{% extends 'Worker/worker-home.html' %}
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="signup-content">
+            <div class="form-container" >
+                <form id="login-form" class="centered-flex" action="{% url 'worker_edit_profile' %}" method="POST"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="msg" style="color: black;font-size: 22px;font-weight: bold;text-shadow: 2px 2px 5px black;">Registration User</div>
+                    <div class="field" style="margin-top: 45px;">
+                        <input type="text" placeholder="First Name"  name="first_name" style="color: black;" value="{{User.first_name}}">
+                    </div>
+                    <div class="field" style="margin-top: 45px;">
+                        <input type="text" placeholder="Last Name"  name="last_name" style="color: black;" value="{{User.last_name}}">
+                    </div>
+                    <div class="field">
+                        <input type="textarea" placeholder="Address"  name="address" style="color: black;" value="{{User.address}}">
+                    </div>
+                    <div class="field">
+                        <input type="number" placeholder="Phone"  name="contact" style="color: black;" value="{{User.phone_number}}">
+                    </div>
+                    <div class="field">
+                        <input type="email" placeholder="Email"  name="email" style="color: black;" value="{{User.email}}">
+                    </div>
+                    <div class="field">
+                        <input type="text" placeholder="Username"  name="username" style="color: black;" value="{{User.username}}">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div class="field">
+                        <input type="text" placeholder="about_me"  name="about_me" style="color: black;" value="{{User.description}}">
+                    </div>
+                    <div class="form-group">
+                        <label class="custum-file-upload" for="file">
+                            <div class="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+                            </div>
+                            <div class="text">
+                            <span>Click to upload Profile Picture</span>
+                            </div>
+                            <input type="file" name="image" id="file" accept="image/*">
+                            </label>                                
+                    </div>
+                
+                    <div><input type="submit" name=""  value="submit" style="background-color: rgb(25, 62, 97);height: 30px;width:100px;display: inline-block;color: white;font-weight: bold;text-align: center;padding-top: 5px;border-radius: 15px;padding-left: 15px;"></div>
+                    <div>
+                    
+                    </div>
+                </form>
+            </div>
         </div>
-
-</body>
-
-</html>
+    </div>
+</div>
+{% endblock %}

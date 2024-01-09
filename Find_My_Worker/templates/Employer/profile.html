@@ -1,9 +1,7 @@
 {% extends 'Employer/employer-home.html' %}
-{% load static %}
-
 {% block content %}
-
-<section class="section section-bg" id="call-to-action" style="background-image: url('{static "images/banner-image-1-1920x500.jpg" }')">
+   <!-- ***** Call to Action Start ***** -->
+   <section class="section section-bg" id="call-to-action" style="background-image: url('{static "images/banner-image-1-1920x500.jpg" }')">
     <div class="container">
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
@@ -17,6 +15,12 @@
         </div>
     </div>
 </section>
+<!-- ***** Call to Action End ***** -->
+{% endblock %}
+{% block non_block %}
+{% endblock %}
+
+{% block job %}
 
 <div class="container border py-3 my-3" style="display: flex; flex-direction: column; align-items: center;">
     <h2>User Profile Details</h2>
@@ -46,7 +50,6 @@
         <img src="{{ user.pic.url }}" alt="User Profile Picture" style="max-width: 100%; max-height: 300px;">
     </div>
 </div>
-
 
 
 {% endblock %}
