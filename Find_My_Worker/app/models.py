@@ -30,12 +30,18 @@ class CustomUser(AbstractUser):
     description = models.CharField(max_length=500,null=True,blank=True)
     pic=models.FileField(upload_to='userprofile')
 
+    def __str__(self):
+        return self.username
+
 class Job(models.Model):
     jobcategory_id = models.ForeignKey(JobCategory, on_delete=models.CASCADE)
     worker_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     Price = models.IntegerField()
     date = models.DateField(default=timezone.now,blank=False)
     description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.jobcategory_id.job_name
 
 
     
@@ -49,8 +55,12 @@ class JobApplications(models.Model):
     job_id = models.ForeignKey(Job, on_delete=models.CASCADE)
     status = models.CharField(choices=status_choices, default="Pending", max_length=50)
     booked_date = models.DateField(default=timezone.now,blank=False)
+    total_amount = models.IntegerField(blank=True, null=True)
     rating = models.IntegerField(null=True, blank=True)
     review = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.job_id.jobcategory_id.job_name    
 
 # class JobBooking(models.Model):
 #     job_id = models.ForeignKey(Job, related_name='worker_booking', on_delete=models.CASCADE,null=True,blank=True)

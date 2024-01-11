@@ -10,6 +10,7 @@ figure, header, nav, section, article, aside, footer, figcaption {
   outline: 0;
 }
 
+
 .clearfix:after {
   content: ".";
   display: block;
@@ -907,6 +908,7 @@ trainers
 
 #trainers .trainer-item img {
   width: 100%;
+  height: 250px;
   border-radius: 5px;
 }
 

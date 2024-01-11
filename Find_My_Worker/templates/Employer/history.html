@@ -60,36 +60,27 @@
                     <table class="table table-striped mb-0">
                       <thead style="background-color: #002d72;">
                         <tr>
-                          <th scope="col">Class name</th>
-                          <th scope="col">Type</th>
-                          <th scope="col">Hours</th>
-                          <th scope="col">Trainer</th>
-                          <th scope="col">Spots</th>
+                          <th scope="col">Job name</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Worker name</th>
+                          <th scope="col">Contact</th>
+                          <th scope="col">Status</th>
                         </tr>
                       </thead>
                       <tbody>
                         {% for job in applications %}
                         <tr>
+                          {% if job.status == "paid" %}
                           <td>{{ job.job_id.jobcategory_id.job_name}}</td>
-                          <td>Yoga</td>
+                          <td>{{ job.booked_date }}</td>
+                          <td>{{ job.job_id.worker_id.username}}</td>
+                          <td>{{ job.job_id.worker_id.phone_number}}</td>           
+                          <td style="font-weight: bold;color:green">
+                            {{ job.status }}
+                          </td>
+                          {% endif %}
                         </tr>
                         {% endfor %}       
-                          <tr>
-                            <td>Mind &amp; Body</td>
-                            <td>Yoga</td>
-                            <td>8:00 AM - 9:00 AM</td>
-                            <td>Adam Stewart</td>
-                            <td>15</td>
-                          </tr>     <tr>
-                            <td>Mind &amp; Body</td>
-                            <td>Yoga</td>
-                            <td>8:00 AM - 9:00 AM</td>
-                            <td>Adam Stewart</td>
-                            <td>15</td>
-                          </tr>        
-       
-                   
-                       
                       </tbody>
                     </table>
                   </div>

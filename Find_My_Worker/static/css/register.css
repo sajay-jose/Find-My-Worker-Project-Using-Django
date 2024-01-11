@@ -251,13 +251,12 @@ body {
   color: #222;
   font-weight: 400;
   background: #282828;
-  padding: 90px 0; }
+     }
 
 .container {
-  width: 1300px;
-  position: relative;
-  margin: 0 auto;
-  background: #fff; }
+  width: 100%;
+  background: #fff; 
+}
 
 .signup-img, .signup-form {
   width: 50%; }

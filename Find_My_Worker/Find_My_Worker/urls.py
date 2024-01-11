@@ -33,7 +33,8 @@ urlpatterns = [
     path('Logout',views.Logout, name="Logout"),
     path('view_jobs',views.view_jobs, name="view_jobs"),
 
-    #############################################################################
+    ##############################################################################################
+    path('job_details/<int:id>',views.job_details, name="job_details"),
     path('employer_home', views.employer_home, name="employer_home"),
     path('employer_profile', views.employer_profile, name="employer_profile"),
     path('employer_history', views.employer_history, name="employer_history"),
@@ -41,6 +42,10 @@ urlpatterns = [
     path('search_jobs', views.search_jobs, name="search_jobs"),
     path('job_apply/<int:id>', views.job_apply, name="job_apply"),
     path('employer_edit_profile', views.employer_edit_profile,name="employer_edit_profile"),
+    path('payments/<int:id>', views.payments,name="payments"),
+    path('add_review/<int:id>', views.add_review,name="add_review"),
+
+###################################################################################################
 
     path('worker_home', views.worker_home, name="worker_home"),
     path('worker_profile', views.worker_profile, name="worker_profile"),
@@ -48,6 +53,7 @@ urlpatterns = [
     path('add_jobs', views.add_jobs, name="add_jobs"),
     path('view_request', views.view_request, name="view_request"),
     path('view_bookings', views.view_bookings, name="view_bookings"),
+    path('payment_request/<int:id>', views.payment_request, name="payment_request"),
     path('edit_applicationstatus/<int:id>', views.edit_applicationstatus, name="edit_applicationstatus"),
     path('edit_job/<int:id>', views.edit_job, name="edit_job"),
     path('delete_job/<int:id>', views.delete_job, name="delete_job"),

@@ -19,8 +19,7 @@ def jobs(request):
     jobs = JobCategory.objects.all()
     return render(request, 'Home/jobs.html', {'jobs':jobs})
 
-def job_details(request):
-    return render(request, 'Home/job-details.html')
+
 
 def contact(request):
     return render(request, 'Home/contact.html')
@@ -36,6 +35,14 @@ def employer_register(request):
         password = request.POST['password']
         description = request.POST['about_me']
         pic = request.FILES['image']
+
+        if CustomUser.objects.filter(username=username).exists():
+            return render(request, 'Home/employer-register.html', {'message': "Username already exists"})
+        if CustomUser.objects.filter(email=email).exists():
+            return render(request, 'Home/employer-register.html', {'message': "Email already exists"})
+        if CustomUser.objects.filter(phone_number=phone_number).exists():
+            return render(request, 'Home/employer-register.html', {'message': "Phone number already exists"})
+
         data = CustomUser.objects.create_user(
             first_name=first_name,
             last_name=last_name,
@@ -65,6 +72,14 @@ def worker_register(request):
         password = request.POST['password']
         description = request.POST['about_me']
         pic = request.FILES['image']
+
+        if CustomUser.objects.filter(username=username).exists():
+            return render(request, 'Home/worker-register.html', {'message': "Username already exists"})
+        if CustomUser.objects.filter(email=email).exists():
+            return render(request, 'Home/worker-register.html', {'message': "Email already exists"})
+        if CustomUser.objects.filter(phone_number=phone_number).exists():
+            return render(request, 'Home/worker-register.html', {'message': "Phone number already exists"})
+
         data = CustomUser.objects.create_user(
             first_name=first_name,
             last_name=last_name,
@@ -114,13 +129,13 @@ def Logout(request):
 
 
 
-
+###########################################    EMPLOYER      ##############################################
 
 
 
 def employer_home(request):
     data = CustomUser.objects.get(id=request.user.id)
-    jobs = Job.objects.all()
+    jobs = JobCategory.objects.all()
 
     context = {
         'user': data,
@@ -138,24 +153,40 @@ def employer_profile(request):
 
 def employer_edit_profile(request):
     User = CustomUser.objects.get(id = request.user.id) 
-    form = WorkerEditForm(instance=User)
     if request.method == 'POST':
-        form = WorkerEditForm(request.POST, instance=User)
-        if form.is_valid():
-            form.save()
-            return redirect(employer_profile)
-        else:
-            context = {
-                'message': "Please enter valid data"
-            }
-            return render(request, 'Employer/edit-profile.html', context)
+        User.first_name = request.POST['first_name']
+        User.last_name = request.POST['last_name']
+        User.address = request.POST['address']
+        User.phone_number = request.POST['contact']
+        User.email = request.POST['email']
+        User.username = request.POST['username']
+        User.description = request.POST['about_me']
+        if 'image' in request.FILES:
+            User.pic = request.FILES['image']
+        User.save()
+        return redirect(employer_profile)
     else:
-         return render(request, 'Employer/edit-profile.html',{'form':form})
+         context = {
+             'User':User
+         }
+         return render(request, 'Employer/edit-profile.html',context)
 
 def view_jobs(request):
-    jobs = Job.objects.all()
-    print(jobs)
-    return render(request, 'Employer/jobs.html', {'jobs':jobs})
+    employer = CustomUser.objects.get(id=request.user.id)
+    job_ids_with_applications = JobApplications.objects.filter(employer_id=employer).values_list('job_id', flat=True)
+    jobs_without_applications = Job.objects.exclude(id__in=job_ids_with_applications).order_by('-id')
+
+    return render(request, 'Employer/jobs.html', {'jobs':jobs_without_applications})
+
+def job_details(request,id):
+    job = Job.objects.get(id=id)
+    applications = JobApplications.objects.filter(job_id=job)
+    print(applications)
+    context = {
+        'applications':applications,
+        'job':job
+    }
+    return render(request, 'Employer/job-details.html',context)
 
 def search_jobs(request):
     User = CustomUser.objects.get(id=request.user.id)
@@ -166,8 +197,12 @@ def search_jobs(request):
             return render(request, 'Employer/jobs.html', {'jobs':jobs, 'User':User})
 
 def job_apply(request,id):
+    jobs = Job.objects.all()
     employer = CustomUser.objects.get(id=request.user.id)
     job = Job.objects.get(id=id)
+    if JobApplications.objects.filter(employer_id=employer,job_id=job).exists():
+        return redirect(view_jobs)
+    
     JobApplications.objects.create(employer_id=employer,job_id=job)
     return redirect(view_jobs)
 
@@ -186,8 +221,32 @@ def employer_applications(request):
     print(applications)
     return render(request, 'Employer/job-applications.html', {'applications':applications})
 
+def payments(request,id):
+    applications = JobApplications.objects.get(id=id)
+    if request.method == 'POST':
+        payment_status = request.POST['status']
+        applications.status = payment_status
+        applications.save()
+        return redirect(employer_applications)
+    else:
+        return render(request, 'Employer/payments.html', {'application':applications})
+    
+def add_review(request,id):
+    applications = JobApplications.objects.get(id=id)
 
-###############################################################################################################
+    user = request.user  
+    if request.method == 'POST':
+        rating = request.POST['rate']
+        review_text = request.POST['review']
+        
+
+        applications.rating = rating
+        applications.review = review_text
+        applications.save()
+        return redirect(employer_applications) 
+
+
+#################################################      WORKER    ######################################################
 
 
 
@@ -287,6 +346,19 @@ def edit_applicationstatus(request,id):
             applications.status = 'Approved'
         elif status == 'reject':
             applications.status = 'Rejected'
+        elif status == 'complete':
+            applications.status = 'Completed'
+        applications.save()
+        return redirect(view_request)
+    
+def payment_request(request,id):
+    worker = CustomUser.objects.get(id=request.user.id)
+    applications = JobApplications.objects.get(id=id)
+    job = Job.objects.get(id=applications.job_id.id)
+    if request.method == 'POST':
+        no_of_hours = int(request.POST['no_of_hours'])
+        applications.total_amount = no_of_hours * job.Price
+
         applications.save()
         return redirect(view_request)
     
@@ -294,7 +366,6 @@ def view_bookings(request):
     worker = CustomUser.objects.get(id=request.user.id)
     applications = JobApplications.objects.filter(job_id__worker_id=worker)
     return render(request, 'Worker/bookings.html', {'applications':applications})
-
 
 
     
