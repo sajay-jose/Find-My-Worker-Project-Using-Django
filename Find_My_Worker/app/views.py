@@ -204,7 +204,7 @@ def job_apply(request,id):
         return redirect(view_jobs)
     
     JobApplications.objects.create(employer_id=employer,job_id=job)
-    return redirect(view_jobs)
+    return redirect(employer_applications)
 
 
 

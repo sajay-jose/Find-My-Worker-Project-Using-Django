@@ -52,7 +52,7 @@ class JobApplications(models.Model):
         ('Rejected','Rejected')
     )
     employer_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
-    job_id = models.ForeignKey(Job, on_delete=models.CASCADE)
+    job_id = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True)
     status = models.CharField(choices=status_choices, default="Pending", max_length=50)
     booked_date = models.DateField(default=timezone.now,blank=False)
     total_amount = models.IntegerField(blank=True, null=True)
